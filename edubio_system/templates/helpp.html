@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHINMA University of Iloilo - Help</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .main-content {
+            animation: fadeSlide .45s ease;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        .help-card.admin-card {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 32px;
+            border: 1px solid #eef2f7;
+            box-shadow:
+                0 14px 35px rgba(0, 0, 0, .08),
+                0 6px 14px rgba(0, 0, 0, .04);
+        }
+
+
+        .help-intro {
+            margin-bottom: 26px;
+        }
+
+        .help-intro h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+
+        .help-intro p {
+            color: #475569;
+            font-size: 14.5px;
+        }
+
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .faq-item {
+            padding: 18px 20px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            transition: all .25s ease;
+        }
+
+        .faq-item:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, .10);
+        }
+
+        .faq-item h3 {
+            font-size: 16.5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-item p {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+
+        .support-box {
+            margin-top: 10px;
+            padding: 22px;
+            background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+            border-radius: 16px;
+            border: 1px solid #c7d2fe;
+            transition: all .25s ease;
+        }
+
+        .support-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 34px rgba(37, 99, 235, .18);
+        }
+
+        .support-box h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .support-box p {
+            font-size: 14.5px;
+            margin: 4px 0;
+        }
+
+
+        .sidebar-menu i {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layout">
+
+
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <img src="{{ url_for('static', filename='school.png') }}" class="sidebar-logo">
+                <h2>Admin Panel</h2>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="graduation-cap"></i> Student Enrollment</a></li>
+                <li><a href="{{ url_for('auth.login')}}"><i data-lucide="user-cog"></i> Teacher Registration</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="clipboard-list"></i> Students List</a></li>
+                <li><a href="{{ url_for('auth.login')}}"><i data-lucide="book-user"></i> Teachers List</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="info"></i> About</a></li>
+                <li><a href="{{ url_for('auth.login') }}" class="active"><i data-lucide="help-circle"></i> Help</a></li>
+                <li><a href="{{ url_for('auth.signup') }}"><i data-lucide="user-plus"></i> Sign up</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="log-in"></i> Login</a></li>
+            </ul>
+        </aside>
+
+
+        <main class="main-content">
+
+            <div class="topbar">
+                <div>
+                    <h1>Help & Support</h1>
+                    <p class="breadcrumb">Dashboard / Help</p>
+                </div>
+            </div>
+
+            <div class="help-card admin-card">
+
+                <div class="help-intro">
+                    <h2>Need Assistance?</h2>
+                    <p>
+                        Check the Frequently Asked Questions below or contact the IT Support Desk for further
+                        assistance.
+                    </p>
+                </div>
+
+
+                <div class="faq-list">
+
+                    <div class="faq-item">
+                        <h3><i data-lucide="shield-alert"></i> I Can't Log In</h3>
+                        <p>
+                            Ensure your fingerprint is already registered at the designated IT station and that your
+                            full name matches your official school records.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3><i data-lucide="fingerprint"></i> Fingerprint Not Recognized</h3>
+                        <p>
+                            Make sure your finger is clean and dry before scanning. If the issue persists, visit the IT
+                            Office to update your biometric profile.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3><i data-lucide="key-round"></i> Forgot Password</h3>
+                        <p>
+                            Use the Forgot Password option on the login page or coordinate with the System Administrator
+                            to verify your identity.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="support-box">
+                    <h3><i data-lucide="headset"></i> Contact Support</h3>
+                    <p><strong>Location:</strong> IT Department</p>
+                    <p><strong>Email:</strong> support@ui.phinmaed.com</p>
+                    <p><strong>Hours:</strong> Monday–Friday, 8:00 AM – 5:00 PM</p>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        © 2026 PHINMA University of Iloilo. Developed for academic purposes.
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+
+</html>

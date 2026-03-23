@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHINMA University of Iloilo - About</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .main-content {
+            animation: fadeSlide .5s ease;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .about-card {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-section {
+            margin-bottom: 24px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .about-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .about-section h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .about-section p {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 14.5px;
+        }
+
+
+        .avatar-wrapper {
+            position: relative;
+            width: fit-content;
+            margin: 0 auto 6px;
+        }
+
+        .avatar-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border: 2px solid #fff;
+            border-radius: 50%;
+        }
+
+        .sidebar-username {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: .9;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+
+        .sidebar-menu i {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layout">
+
+
+        <aside class="sidebar">
+            <div class="sidebar-top">
+
+                {% set photo = session.get('user_picture') %}
+                {% set username = session.get('user_name') %}
+                {% set initial = (username[0] if username else 'G') %}
+
+                <div class="avatar-wrapper">
+                    {% if photo %}
+                    <img src="{{ photo }}" class="sidebar-avatar" alt="User Photo">
+                    {% else %}
+                    <div class="avatar-fallback">{{ initial|upper }}</div>
+                    {% endif %}
+                    <span class="avatar-status"></span>
+                </div>
+
+                <h2>Admin Panel</h2>
+
+                <div class="sidebar-username">
+                    {{ username if username else 'Guest' }}
+                </div>
+
+            </div>
+
+            <ul class="sidebar-menu">
+            <li><a href="{{ url_for('auth.login') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="graduation-cap"></i> Student Enrollment</a></li>
+                <li><a href="{{ url_for('auth.login')}}"><i data-lucide="user-cog"></i> Teacher Registration</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="clipboard-list"></i> Students List</a></li>
+                <li><a href="{{ url_for('auth.login')}}"><i data-lucide="book-user"></i> Teachers List</a></li>
+                <li><a href="{{ url_for('auth.login') }}" class="active"><i data-lucide="info"></i> About</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="help-circle"></i> Help</a></li>
+                <li><a href="{{ url_for('auth.signup') }}"><i data-lucide="user-plus"></i> Sign up</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="log-in"></i> Login</a></li>
+            </ul>
+        </aside>
+
+
+        <main class="main-content">
+
+            <div class="topbar">
+                <div>
+                    <h1>About the System</h1>
+                    <p class="breadcrumb">Dashboard / About</p>
+                </div>
+            </div>
+
+            <div class="about-card admin-card">
+
+                <div class="about-section">
+                    <h2><i data-lucide="file-text"></i> System Overview</h2>
+                    <p>
+                        The PHINMA UI Attendance Portal is a biometric-based system that uses fingerprint scanning to
+                        accurately record student and faculty attendance. It provides secure, reliable, and
+                        tamper-resistant attendance tracking for the institution.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h2><i data-lucide="target"></i> Our Mission</h2>
+                    <p>
+                        Our mission is to reduce manual paperwork and streamline the attendance process, allowing
+                        students and teachers to focus more on learning, productivity, and classroom engagement.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h2><i data-lucide="cpu"></i> How It Works</h2>
+                    <p>
+                        After registration, the user's fingerprint is enrolled into the system. During attendance, the
+                        fingerprint is scanned and verified against the database to grant secure access and log
+                        attendance automatically.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h2><i data-lucide="shield-check"></i> Data Privacy</h2>
+                    <p>
+                        We prioritize your privacy and security. Fingerprint data is converted into encrypted biometric
+                        templates and is never stored as raw images, ensuring maximum protection of user data.
+                    </p>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        © 2026 PHINMA University of Iloilo. Developed for academic purposes.
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+</body>
+
+</html>

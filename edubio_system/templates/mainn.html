@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHINMA University of Iloilo - Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+   
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+
+@keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.main-content {
+    animation: fadeSlide .5s ease;
+}
+
+.dash-card {
+    animation: fadeSlide .6s ease;
+    animation-fill-mode: both;
+    transition: all .25s ease;
+}
+
+.dash-card:nth-child(1) { animation-delay: .05s; }
+.dash-card:nth-child(2) { animation-delay: .10s; }
+.dash-card:nth-child(3) { animation-delay: .15s; }
+.dash-card:nth-child(4) { animation-delay: .20s; }
+
+
+.sidebar-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.5);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    display: block;
+    margin: 0 auto 6px;
+}
+
+.avatar-fallback {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #1e293b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+    margin: 0 auto 6px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+
+.sidebar-username {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: .9;
+    margin-top: 4px;
+    text-align: center;
+}
+
+
+.sidebar-menu i {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.welcome-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+    </style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    
+    <aside class="sidebar">
+        <div class="sidebar-top">
+
+            {% set photo = session.get('user_picture') %}
+
+            {% if photo %}
+                <img src=" photo" class="sidebar-avatar" alt="User Photo">
+            {% else %}
+                <div class="avatar-fallback">
+                    {{ name[0] if name else 'G' }}
+                </div>
+            {% endif %}
+
+            <h2>Admin Panel</h2>
+
+            <div class="sidebar-username">
+                Guest
+            </div>
+        </div>
+
+       
+        <ul class="sidebar-menu">
+                <li><a href="{{ url_for('auth.login') }}" class="active"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="graduation-cap"></i> Student Enrollment</a></li>
+                <li><a href="{{ url_for('auth.login')}}"><i data-lucide="user-cog"></i> Teacher Registration</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="clipboard-list"></i> Students List</a></li>
+                <li><a href="{{ url_for('auth.login')}}"><i data-lucide="book-user"></i> Teachers List</a></li>
+                <li><a href="{{ url_for('pages.aboutt') }}"><i data-lucide="info"></i> About</a></li>
+                <li><a href="{{ url_for('pages.helpp') }}"><i data-lucide="help-circle"></i> Help</a></li>
+                <li><a href="{{ url_for('auth.signup') }}"><i data-lucide="user-plus"></i> Sign up</a></li>
+                <li><a href="{{ url_for('auth.login') }}"><i data-lucide="log-in"></i> Login</a></li>
+        </ul>
+    </aside>
+
+  
+    <main class="main-content">
+
+        <div class="topbar">
+            <h1>Dashboard</h1>
+            <p class="breadcrumb">Admin Overview</p>
+        </div>
+
+        <div class="dashboard-wrapper">
+
+            <h2 class="welcome-title">
+                Welcome, Guest!
+                <i data-lucide="hand-wave"></i>
+            </h2>
+
+            <div class="dashboard-grid">
+
+                <a href="{{ url_for('auth.login') }}" class="dash-card">
+                    <h3>Student Enrollment</h3>
+                    <p>Manage student records</p>
+                </a>
+
+                <a href="{{ url_for('teacher.teacher_registration') }}" class="dash-card">
+                    <h3>Teacher Registration</h3>
+                    <p>Register new teachers</p>
+                </a>
+
+                <a href="{{ url_for('student.stslist') }}" class="dash-card">
+                    <h3>Students List</h3>
+                    <p>View all students</p>
+                </a>
+
+                <a href="{{ url_for('teacher.teacher_list') }}" class="dash-card">
+                    <h3>Teachers List</h3>
+                    <p>View all teachers</p>
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<footer class="footer">
+    © 2026 PHINMA University of Iloilo. Developed for academic purposes.
+</footer>
+
+<script>
+    lucide.createIcons();
+</script>
+
+</body>
+</html>

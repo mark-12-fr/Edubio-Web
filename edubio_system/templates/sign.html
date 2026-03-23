@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHINMA University of Iloilo - Sign Up</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(135deg,#eef2f7 0%,#dbeafe 40%,#c7d2fe 100%);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+.auth-header{padding:18px 40px}
+.auth-header-inner{display:flex;align-items:center;gap:10px}
+.auth-logo{width:42px}
+.auth-school-name{font-weight:600;font-size:14px;color:#0f172a}
+
+.auth-main{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:24px;
+}
+
+
+.login-card{
+    width:100%;
+    max-width:420px;
+    padding:40px 34px;
+    border-radius:20px;
+    background:#ffffff;
+    border:1px solid #eef2f7;
+    box-shadow:
+        0 14px 35px rgba(0,0,0,.08),
+        0 6px 14px rgba(0,0,0,.04);
+    text-align:center;
+}
+
+.login-card h2{
+    margin-bottom:6px;
+    font-size:26px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.login-subtitle{
+    font-size:13.5px;
+    color:#64748b;
+    margin-bottom:18px;
+}
+
+.google-btn{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    background:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    text-decoration:none;
+    color:#111;
+}
+.google-btn:hover{
+    background:#f9fafb;
+}
+
+
+.divider{
+    margin:18px 0;
+    font-size:12px;
+    color:#64748b;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.divider::before,
+.divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#e5e7eb;
+}
+
+
+.form-group{position:relative;margin-top:16px;text-align:left}
+
+.form-group input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #d1d5db;
+    background:#f8fafc;
+    font-size:14px;
+    outline:none;
+    transition:.2s;
+}
+
+.form-group label{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    background:#fff;
+    padding:0 6px;
+    font-size:13px;
+    color:#64748b;
+    pointer-events:none;
+    transition:.2s;
+}
+
+.form-group input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+    background:#fff;
+}
+
+.form-group input:focus+label,
+.form-group input:not(:placeholder-shown)+label{
+    top:-8px;
+    font-size:11px;
+    color:#2563eb;
+}
+
+
+.field-msg{
+    font-size:12px;
+    margin-top:6px;
+    display:none;
+}
+
+.field-msg.error{color:#dc2626}
+.field-msg.success{color:#059669}
+
+.strength-meter{
+    height:6px;
+    border-radius:6px;
+    background:#e5e7eb;
+    margin-top:8px;
+    overflow:hidden;
+}
+.strength-fill{
+    height:100%;
+    width:0%;
+    transition:.3s;
+}
+
+
+.btn-login{
+    width:100%;
+    margin-top:20px;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    color:#fff;
+    cursor:pointer;
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    transition:.25s;
+}
+.btn-login:hover{
+    transform:translateY(-1px);
+    box-shadow:0 14px 28px rgba(37,99,235,.35);
+}
+
+.login-text{margin-top:16px;font-size:13.5px}
+.login-text a{color:#2563eb;font-weight:600;text-decoration:none}
+</style>
+</head>
+
+<body>
+
+<header class="auth-header">
+<div class="auth-header-inner">
+<img src="{{ url_for('static', filename='school.png') }}" class="auth-logo">
+<span class="auth-school-name">PHINMA University of Iloilo</span>
+</div>
+</header>
+
+<main class="auth-main">
+<div class="login-card">
+
+<h2>Create Account</h2>
+<p class="login-subtitle">Sign up to get started</p>
+
+<a href="{{ url_for('google.login') }}" class="google-btn">
+<img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18">
+Sign up with Google
+</a>
+
+<div class="divider">or continue with email</div>
+
+<form action="{{ url_for('auth.signup') }}" method="POST" onsubmit="return validateForm()">
+
+
+<div class="form-group">
+<input type="text" name="full_name" required placeholder=" ">
+<label>Full Name</label>
+</div>
+
+
+<div class="form-group">
+<input type="email" name="email" id="email" required placeholder=" " onblur="checkEmail()">
+<label>Email Address</label>
+<div id="emailMsg" class="field-msg"></div>
+</div>
+
+
+<div class="form-group">
+<input type="password" name="password" id="password" required placeholder=" " oninput="checkStrength();checkMatch();">
+<label>Password</label>
+<div class="strength-meter">
+<div class="strength-fill" id="strengthFill"></div>
+</div>
+</div>
+
+<div class="form-group">
+<input type="password" name="confirm_password" id="confirmPassword" required placeholder=" " oninput="checkMatch()">
+<label>Confirm Password</label>
+<div id="matchMsg" class="field-msg"></div>
+</div>
+
+<button type="submit" class="btn-login">Create Account</button>
+</form>
+
+<div class="login-text">
+Already have an account?
+<a href="{{ url_for('auth.login') }}">Log in</a>
+</div>
+
+</div>
+</main>
+
+<script>
+function checkStrength(){
+    const val=document.getElementById("password").value;
+    const fill=document.getElementById("strengthFill");
+
+    let score=0;
+    if(val.length>=8) score++;
+    if(/[A-Z]/.test(val)) score++;
+    if(/[0-9]/.test(val)) score++;
+    if(/[^A-Za-z0-9]/.test(val)) score++;
+
+    const colors=["#ef4444","#f59e0b","#3b82f6","#10b981"];
+    fill.style.width=(score*25)+"%";
+    fill.style.background=colors[score-1]||"#e5e7eb";
+}
+
+
+function checkMatch(){
+    const pass=document.getElementById("password").value;
+    const confirm=document.getElementById("confirmPassword").value;
+    const msg=document.getElementById("matchMsg");
+
+    if(!confirm){
+        msg.style.display="none";
+        return;
+    }
+
+    msg.style.display="block";
+
+    if(pass===confirm){
+        msg.className="field-msg success";
+        msg.textContent="Passwords match";
+    }else{
+        msg.className="field-msg error";
+        msg.textContent="Passwords do not match";
+    }
+}
+
+
+let emailExists=false;
+
+function checkEmail(){
+    const email=document.getElementById("email").value;
+    const msg=document.getElementById("emailMsg");
+
+    if(!email) return;
+
+    fetch("/check_email?email="+encodeURIComponent(email))
+    .then(res=>res.json())
+    .then(data=>{
+        msg.style.display="block";
+
+        if(data.exists){
+            emailExists=true;
+            msg.className="field-msg error";
+            msg.textContent=`This account ${email} is already registered`;
+        }else{
+            emailExists=false;
+            msg.className="field-msg success";
+            msg.textContent="Email is available";
+        }
+    });
+}
+
+
+function validateForm(){
+    if(emailExists){
+        alert("This email is already registered.");
+        return false;
+    }
+
+    const pass=document.getElementById("password").value;
+    const confirm=document.getElementById("confirmPassword").value;
+
+    if(pass!==confirm){
+        alert("Passwords do not match.");
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+</body>
+</html>

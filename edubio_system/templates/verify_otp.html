@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHINMA University of Iloilo - Verify OTP</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+
+*, *::before, *::after{box-sizing:border-box;}
+
+body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(135deg,#eef2f7 0%,#dbeafe 40%,#c7d2fe 100%);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+
+.auth-header{padding:18px 40px;}
+.auth-header-inner{display:flex;align-items:center;gap:10px;}
+.auth-logo{width:42px;}
+.auth-school-name{font-weight:600;font-size:14px;color:#0f172a;}
+
+
+.top-alert{
+    position:fixed;
+    top:70px;
+    left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:520px;
+    padding:0 20px;
+    z-index:9999;
+}
+
+.alert-box{
+    padding:14px 18px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:500;
+    backdrop-filter:blur(14px);
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    animation:slideDown .5s ease;
+}
+
+.alert-box.error{
+    background:rgba(254,242,242,.95);
+    border:1px solid #fecaca;
+    color:#b91c1c;
+}
+
+.alert-box.success{
+    background:rgba(236,253,245,.95);
+    border:1px solid #bbf7d0;
+    color:#065f46;
+}
+
+@keyframes slideDown{
+    from{opacity:0;transform:translateY(-20px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+
+.auth-main{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:24px;
+}
+
+/* CARD — SAME AS LOGIN/SIGNUP */
+.login-card{
+    width:100%;
+    max-width:420px;
+    padding:42px 34px;
+    border-radius:24px;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.7);
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.12),
+        0 12px 30px rgba(0,0,0,.08);
+    text-align:center;
+}
+
+.login-card h2{
+    margin:0 0 6px;
+    font-size:26px;
+    font-weight:700;
+}
+
+.login-subtitle{
+    font-size:13.5px;
+    color:#64748b;
+    margin-bottom:18px;
+}
+
+
+.form-group{position:relative;margin-top:16px;}
+
+.form-group input{
+    width:100%;
+    padding:16px;
+    border-radius:12px;
+    border:1px solid #d1d5db;
+    background:#f8fafc;
+    font-size:22px;
+    outline:none;
+    text-align:center;
+    letter-spacing:8px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.form-group input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+    background:#fff;
+}
+
+
+.btn-login{
+    width:100%;
+    margin-top:22px;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    color:white;
+    cursor:pointer;
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    transition:.25s;
+}
+
+.btn-login:hover{
+    transform:translateY(-1px);
+    box-shadow:0 14px 28px rgba(37,99,235,.35);
+}
+
+.btn-login.loading{
+    pointer-events:none;
+    opacity:.85;
+}
+
+
+.resend-box{
+    margin-top:14px;
+    font-size:13px;
+    color:#64748b;
+}
+
+.resend-btn{
+    color:#2563eb;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+}
+
+.resend-btn.disabled{
+    opacity:.5;
+    pointer-events:none;
+}
+
+
+.login-links{margin-top:16px;font-size:13.5px;}
+.login-links a{color:#2563eb;text-decoration:none;font-weight:600;}
+
+</style>
+</head>
+
+<body>
+
+<header class="auth-header">
+<div class="auth-header-inner">
+<img src="{{ url_for('static', filename='school.png') }}" class="auth-logo">
+<span class="auth-school-name">PHINMA University of Iloilo</span>
+</div>
+</header>
+
+
+<div class="top-alert">
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert-box {{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+</div>
+
+<main class="auth-main">
+<div class="login-card">
+
+<h2>Verify OTP</h2>
+<p class="login-subtitle">Enter the 6-digit verification code.</p>
+
+<form method="POST" onsubmit="setLoading()">
+
+<div class="form-group">
+<input
+    type="text"
+    name="otp"
+    id="otpInput"
+    maxlength="6"
+    inputmode="numeric"
+    autocomplete="one-time-code"
+    required
+    placeholder="000000">
+</div>
+
+<button class="btn-login" id="verifyBtn">Verify OTP</button>
+</form>
+
+
+<div class="resend-box">
+<span id="countText">Resend available in 60s</span><br>
+<a id="resendBtn" class="resend-btn disabled">Resend OTP</a>
+</div>
+
+<div class="login-links">
+<a href="{{ url_for('auth.login') }}">Back</a>
+</div>
+
+</div>
+</main>
+
+<script>
+
+
+document.addEventListener("DOMContentLoaded",()=>{
+    const otp=document.getElementById("otpInput");
+    if(otp) otp.focus();
+});
+
+
+document.getElementById("otpInput").addEventListener("input",function(){
+    this.value=this.value.replace(/[^0-9]/g,'');
+});
+
+
+function setLoading(){
+    const btn=document.getElementById("verifyBtn");
+    btn.classList.add("loading");
+    btn.innerText="Verifying...";
+}
+
+
+let timeLeft=60;
+const countText=document.getElementById("countText");
+const resendBtn=document.getElementById("resendBtn");
+
+const timer=setInterval(()=>{
+    timeLeft--;
+    countText.innerText=`Resend available in ${timeLeft}s`;
+
+    if(timeLeft<=0){
+        clearInterval(timer);
+        countText.innerText="Didn't receive the code?";
+        resendBtn.classList.remove("disabled");
+    }
+},1000);
+
+
+resendBtn.addEventListener("click",()=>{
+    if(resendBtn.classList.contains("disabled")) return;
+
+    window.location.href="{{ url_for('forgot_password') }}";
+});
+
+document.addEventListener("DOMContentLoaded",()=>{
+    const alertBox=document.querySelector(".alert-box");
+    if(alertBox){
+        setTimeout(()=>{
+            alertBox.style.opacity="0";
+            setTimeout(()=>alertBox.style.display="none",400);
+        },3000);
+    }
+});
+
+</script>
+
+</body>
+</html>

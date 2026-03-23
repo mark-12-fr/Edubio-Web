@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHINMA University of Iloilo - Teacher Registration</title>
+
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+
+@keyframes fadeSlide {
+    from { opacity:0; transform:translateY(18px); }
+    to { opacity:1; transform:translateY(0); }
+}
+
+.main-content { animation: fadeSlide .5s ease; }
+
+.avatar-wrapper{
+    position: relative;
+    width: fit-content;
+    margin: 0 auto 6px;
+}
+
+.sidebar-avatar{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid rgba(255,255,255,0.5);
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+    display:block;
+}
+
+.avatar-fallback{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:#1e293b;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:20px;
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+
+.avatar-status{
+    position:absolute;
+    bottom:2px;
+    right:2px;
+    width:12px;
+    height:12px;
+    background:#22c55e;
+    border:2px solid white;
+    border-radius:50%;
+}
+
+.sidebar-username{
+    font-size:13px;
+    font-weight:600;
+    opacity:.9;
+    margin-top:4px;
+    text-align:center;
+}
+
+
+.enrollment-card.admin-card {
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 32px;
+    border: 1px solid #eef2f7;
+    box-shadow:
+        0 14px 35px rgba(0,0,0,0.08),
+        0 6px 14px rgba(0,0,0,0.04);
+    transition: all 0.25s ease;
+}
+
+.enrollment-card.admin-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 24px 55px rgba(0,0,0,0.12),
+        0 8px 20px rgba(0,0,0,0.06);
+}
+
+
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.password-wrapper {
+    grid-column: span 2;
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .password-wrapper { grid-column: span 1; }
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 15px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    background: #f8fafc;
+    transition: all 0.22s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #2563eb;
+    background: #ffffff;
+    transform: scale(1.015);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.password-wrapper input { padding-right: 70px; }
+
+.toggle-pass {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: #2563eb;
+    cursor: pointer;
+}
+
+
+.form-actions {
+    margin-top: 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg,#3b82f6,#2563eb);
+    color: white;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+
+<aside class="sidebar">
+<div class="sidebar-top">
+
+{% set photo = session.get('user_picture') %}
+{% set username = session.get('user_name') %}
+{% set initial = (username[0] if username else 'G') %}
+
+<div class="avatar-wrapper">
+    {% if photo %}
+        <img src="{{ photo }}" class="sidebar-avatar" alt="User Photo">
+    {% else %}
+        <div class="avatar-fallback">{{ initial|upper }}</div>
+    {% endif %}
+    <span class="avatar-status"></span>
+</div>
+
+<h2>Admin Panel</h2>
+
+<div class="sidebar-username">
+    {{ username if username else 'Guest' }}
+</div>
+
+</div>
+
+<ul class="sidebar-menu">
+<li><a href="{{ url_for('pages.main') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+<li><a href="{{ url_for('enroll.enrollform') }}"><i data-lucide="graduation-cap"></i> Student Enrollment</a></li>
+<li><a href="{{ url_for('teacher.teacher_registration') }}" class="active"><i data-lucide="user-cog"></i> Teacher Registration</a></li>
+<li><a href="{{ url_for('student.stslist') }}"><i data-lucide="clipboard-list"></i> Students List</a></li>
+<li><a href="{{ url_for('teacher.teacher_list') }}"><i data-lucide="book-user"></i> Teachers List</a></li>
+<li><a href="{{ url_for('pages.about') }}"><i data-lucide="info"></i> About</a></li>
+<li><a href="{{ url_for('pages.help') }}"><i data-lucide="help-circle"></i> Help</a></li>
+<li><a href="{{ url_for('auth.logout') }}"><i data-lucide="log-out"></i> Logout</a></li>
+</ul>
+</aside>
+
+
+<main class="main-content">
+
+<div class="topbar">
+<div>
+<h1>Teacher Registration</h1>
+<p class="breadcrumb">Dashboard / Teacher Registration</p>
+</div>
+</div>
+
+<div class="enrollment-card admin-card">
+
+<div class="card-header">
+<h2>Register New Teacher</h2>
+<span class="card-subtitle">Fill in teacher information</span>
+</div>
+
+<form method="POST" action="{{ url_for('teacher.teacher_registration') }}">
+
+<div class="form-grid">
+<input class="form-control" type="text" name="teacher_id" placeholder="Teacher ID" required>
+<input class="form-control" type="text" name="full_name" placeholder="Full Name" required>
+<input class="form-control" type="email" name="email" placeholder="Email Address" required>
+
+<select class="form-control" name="subject" required>
+<option value="">Select Subject</option>
+<option>Programming</option>
+<option>Database</option>
+<option>Networking</option>
+<option>Web Development</option>
+<option>Cybersecurity</option>
+<option>Mathematics</option>
+</select>
+
+<div class="password-wrapper">
+<input class="form-control" type="password" name="password" id="password" placeholder="Assign Password" required>
+<span class="toggle-pass" onclick="togglePassword()">SHOW</span>
+</div>
+</div>
+
+<div class="form-actions">
+<button type="reset" class="btn-secondary">Clear</button>
+<button type="submit" class="btn-primary">Register Teacher</button>
+</div>
+
+</form>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">
+© 2026 PHINMA University of Iloilo. Developed for academic purposes.
+</footer>
+
+<script>
+lucide.createIcons();
+
+function togglePassword(){
+    const pass=document.getElementById("password");
+    const toggle=document.querySelector(".toggle-pass");
+
+    if(pass.type==="password"){
+        pass.type="text";
+        toggle.textContent="HIDE";
+    }else{
+        pass.type="password";
+        toggle.textContent="SHOW";
+    }
+}
+</script>
+
+</body>
+</html>

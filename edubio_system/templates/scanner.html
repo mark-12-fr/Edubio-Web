@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHINMA University of Iloilo - Fingerprint Scan</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+
+@keyframes fadeSlide{
+    from{opacity:0;transform:translateY(18px);}
+    to{opacity:1;transform:translateY(0);}
+}
+.main-content{animation:fadeSlide .5s ease;}
+
+
+.scan-card{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-top:30px;
+}
+
+.admin-card{
+    backdrop-filter: blur(14px);
+    background: rgba(255,255,255,0.75);
+    border-radius:22px;
+    padding:50px 60px;
+    max-width:920px;
+    width:100%;
+    display:flex;
+    gap:60px;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(255,255,255,0.4);
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.10),
+        inset 0 1px 0 rgba(255,255,255,.6);
+    transition:.35s ease;
+}
+
+.admin-card:hover{
+    transform:translateY(-4px);
+}
+
+
+.fingerprint-container{
+    position:relative;
+    width:260px;
+    height:260px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.fingerprint{
+    width:220px;
+    opacity:.9;
+    transition:.4s ease;
+}
+
+.fingerprint.scanning{
+    filter:
+        drop-shadow(0 0 10px #22c55e)
+        drop-shadow(0 0 25px #22c55e)
+        drop-shadow(0 0 45px #22c55e);
+    opacity:1;
+}
+
+
+.scan-line{
+    position:absolute;
+    width:210px;
+    height:4px;
+    background:linear-gradient(90deg,transparent,#22c55e,transparent);
+    box-shadow:0 0 18px #22c55e;
+    top:30px;
+    opacity:0;
+}
+
+.fingerprint-container.scanning .scan-line{
+    animation:scanMove 1.8s linear infinite;
+    opacity:1;
+}
+
+.pulse-ring{
+    position:absolute;
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    border:2px solid rgba(34,197,94,.35);
+    opacity:0;
+}
+
+.fingerprint-container.scanning .pulse-ring{
+    animation:pulse 1.6s ease-out infinite;
+    opacity:1;
+}
+
+
+.scan-info{max-width:360px;}
+.status{
+    font-size:18px;
+    margin-bottom:14px;
+    font-weight:700;
+}
+
+.student-name{
+    margin-bottom:25px;
+    font-size:15px;
+}
+
+
+.actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.btn-primary,
+.btn-success{
+    border:none;
+    padding:13px 28px;
+    border-radius:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s ease;
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    color:#fff;
+}
+.btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 28px rgba(37,99,235,.35);
+}
+
+.btn-success{
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+    color:#fff;
+}
+.btn-success:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 28px rgba(34,197,94,.35);
+}
+
+
+.success-text{
+    margin-top:18px;
+    color:#15803d;
+    font-weight:700;
+    animation:successPop .5s ease;
+}
+
+@keyframes successPop{
+    0%{transform:scale(.7);opacity:0;}
+    60%{transform:scale(1.15);}
+    100%{transform:scale(1);opacity:1;}
+}
+
+
+.avatar-wrapper{position:relative;width:fit-content;margin:0 auto 6px;}
+.sidebar-avatar{
+    width:56px;height:56px;border-radius:50%;
+    object-fit:cover;border:2px solid rgba(255,255,255,0.5);
+}
+.avatar-fallback{
+    width:56px;height:56px;border-radius:50%;
+    background:#1e293b;color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+}
+.avatar-status{
+    position:absolute;bottom:2px;right:2px;
+    width:12px;height:12px;background:#22c55e;
+    border:2px solid #fff;border-radius:50%;
+}
+.sidebar-username{
+    font-size:13px;font-weight:600;opacity:.9;
+    margin-top:4px;text-align:center;
+}
+.sidebar-menu i{
+    width:18px;height:18px;margin-right:10px;
+}
+
+
+@keyframes scanMove{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(180px);}
+}
+@keyframes pulse{
+    0%{transform:scale(.7);opacity:.7;}
+    100%{transform:scale(1.25);opacity:0;}
+}
+
+@media(max-width:900px){
+    .admin-card{
+        flex-direction:column;
+        text-align:center;
+        gap:30px;
+    }
+}
+
+/* ✅ ADD ONLY */
+.success-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+.success-card{
+    background:#fff;
+    padding:40px;
+    border-radius:16px;
+    text-align:center;
+    animation:popIn .35s ease;
+}
+@keyframes popIn{
+    from{transform:scale(.7);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+
+<aside class="sidebar">
+<div class="sidebar-top">
+
+{% set photo = session.get('user_picture') %}
+{% set username = session.get('user_name') %}
+{% set initial = (username[0] if username else 'G') %}
+
+<div class="avatar-wrapper">
+{% if photo %}
+<img src="{{ photo }}" class="sidebar-avatar">
+{% else %}
+<div class="avatar-fallback">{{ initial|upper }}</div>
+{% endif %}
+<span class="avatar-status"></span>
+</div>
+
+<h2>Admin Panel</h2>
+<div class="sidebar-username">
+{{ username if username else 'Guest' }}
+</div>
+
+</div>
+
+<ul class="sidebar-menu">
+<li><a href="{{ url_for('pages.main') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+<li><a href="{{ url_for('enroll.enrollform') }}" class="active"><i data-lucide="graduation-cap"></i> Student Enrollment</a></li>
+<li><a href="{{ url_for('teacher.teacher_registration') }}"><i data-lucide="user-cog"></i> Teacher Registration</a></li>
+<li><a href="{{ url_for('student.stslist') }}"><i data-lucide="clipboard-list"></i> Students List</a></li>
+<li><a href="{{ url_for('teacher.teacher_list') }}"><i data-lucide="book-user"></i> Teachers List</a></li>
+<li><a href="{{ url_for('pages.about') }}"><i data-lucide="info"></i> About</a></li>
+<li><a href="{{ url_for('pages.help') }}"><i data-lucide="help-circle"></i> Help</a></li>
+<li><a href="{{ url_for('auth.logout') }}"><i data-lucide="log-out"></i> Logout</a></li>
+</ul>
+</aside>
+
+
+<main class="main-content">
+
+<div class="topbar">
+<h1>Fingerprint Enrollment</h1>
+<p class="breadcrumb">Dashboard / Fingerprint Enrollment</p>
+</div>
+
+<div class="scan-card">
+<div class="admin-card">
+
+<div class="fingerprint-container" id="fingerBox">
+<div class="pulse-ring"></div>
+<img src="{{ url_for('static', filename='fingerprint.png') }}" class="fingerprint" id="fingerImg">
+<div class="scan-line"></div>
+</div>
+
+<div class="scan-info">
+<p class="status" id="statusText">Ready to scan fingerprint</p>
+<p class="student-name">
+Student: <strong>{{ session.get('enrolling_student','Unknown') }}</strong>
+</p>
+
+<div class="actions">
+<button id="scanBtn" class="btn-primary" onclick="startScan()">Start Scan</button>
+<button id="enrollBtn" class="btn-success" onclick="confirmEnroll()" style="display:none;">Enroll Now</button>
+</div>
+
+<div id="successMsg" class="success-text" style="display:none;">
+Fingerprint captured successfully!
+</div>
+</div>
+
+</div>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">
+© 2026 PHINMA University of Iloilo.
+</footer>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+lucide.createIcons();
+
+const scanSound = new Audio("https://actions.google.com/sounds/v1/science_fiction/laser_1.ogg");
+
+const socket = io({
+    transports: ["websocket", "polling"]
+});
+
+const fingerBox = document.getElementById("fingerBox");
+const fingerImg = document.getElementById("fingerImg");
+const statusText = document.getElementById("statusText");
+const enrollBtn = document.getElementById("enrollBtn");
+const successMsg = document.getElementById("successMsg");
+const scanBtn = document.getElementById("scanBtn");
+
+const successModal = document.getElementById("successModal");
+const studentNameDisplay = document.getElementById("studentNameDisplay");
+
+let scanInProgress = false;
+let fingerprintReady = false;
+
+// ===============================
+// 🚀 START SCAN
+// ===============================
+function startScan() {
+    if (scanInProgress) return;
+
+    scanInProgress = true;
+    fingerprintReady = false;
+    scanBtn.disabled = true;
+
+    scanSound.currentTime = 0;
+    scanSound.play().catch(() => {});
+
+    statusText.textContent = "Scanning fingerprint...";
+    enrollBtn.style.display = "none";
+    successMsg.style.display = "none";
+
+    fingerBox.classList.add("scanning");
+    fingerImg.classList.add("scanning");
+
+    fetch("{{ url_for('enroll.start_scan') }}")
+        .then(r => r.json())
+        .then(d => {
+            if (!d.success) throw new Error();
+        })
+        .catch(() => {
+            scanInProgress = false;
+            scanBtn.disabled = false;
+            fingerBox.classList.remove("scanning");
+            fingerImg.classList.remove("scanning");
+            statusText.textContent = "Failed to start scanner.";
+        });
+}
+
+// ===============================
+// ✅ FINGERPRINT RESULT
+// ===============================
+socket.on("fingerprint_result", data => {
+    scanInProgress = false;
+    scanBtn.disabled = false;
+    fingerBox.classList.remove("scanning");
+    fingerImg.classList.remove("scanning");
+
+    if (data.status === "ok") {
+        fingerprintReady = true;
+        statusText.textContent = "Fingerprint captured!";
+        enrollBtn.style.display = "inline-block";
+        successMsg.style.display = "block";
+
+    } else if (data.status === "no_finger") {
+        statusText.textContent = "No finger detected. Please try again.";
+
+    } else if (data.status === "timeout") {
+        statusText.textContent = "Scan timeout. Please scan again.";
+
+    } else if (data.status === "already_enrolled") {
+        statusText.textContent = "Fingerprint already enrolled.";
+
+    } else {
+        statusText.textContent = "Fingerprint failed. Please scan again.";
+    }
+});
+
+// ===============================
+// ⭐ DUPLICATE FROM FLASK
+// ===============================
+// UPDATE THIS PART IN YOUR HTML JS
+socket.on("already_enrolled_web", function(data){
+    scanInProgress = false;
+    scanBtn.disabled = false;
+
+    fingerBox.classList.remove("scanning");
+    fingerImg.classList.remove("scanning");
+
+    enrollBtn.style.display = "none";
+    successMsg.style.display = "none";
+
+    // Bag-uhon ang status text para makita ang pangalan
+    statusText.innerHTML = `<span style="color:red;">${data.name} is already enrolled!</span>`;
+    
+    alert(data.name + " is already enrolled!");
+});
+
+// ===============================
+// 💾 CONFIRM ENROLL
+// ===============================
+function confirmEnroll(){
+    if(!fingerprintReady){
+        alert("Fingerprint not captured yet.");
+        return;
+    }
+
+    enrollBtn.disabled=true;
+    statusText.textContent="Saving enrollment...";
+
+    fetch("{{ url_for('enroll.confirm_enroll') }}",{method:"POST"})
+    .then(r=>r.json())
+    .then(d=>{
+        if(d.success){
+
+            studentNameDisplay.textContent =
+                "Student: " + (d.name || "Enrolled Successfully");
+
+            successModal.style.display="flex";
+            fingerprintReady=false;
+
+            setTimeout(()=>{
+                window.location.href="{{ url_for('student.stslist') }}";
+            },3000);
+
+        }else{
+            alert(d.message);
+            enrollBtn.disabled=false;
+        }
+    })
+    .catch(()=>{ enrollBtn.disabled=false; });
+}
+</script>
+
+</body>
+</html>

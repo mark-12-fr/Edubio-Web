@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHINMA University of Iloilo - Teachers List</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+@keyframes fadeSlide {
+    from { opacity:0; transform:translateY(18px); }
+    to { opacity:1; transform:translateY(0); }
+}
+.main-content{ animation:fadeSlide .5s ease; }
+
+.avatar-wrapper{ position:relative; width:fit-content; margin:0 auto 6px; }
+.sidebar-avatar{
+    width:56px;height:56px;border-radius:50%;object-fit:cover;
+    border:2px solid rgba(255,255,255,0.5);
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+.avatar-fallback{
+    width:56px;height:56px;border-radius:50%;
+    background:#1e293b;color:white;display:flex;
+    align-items:center;justify-content:center;font-weight:700;
+}
+.avatar-status{
+    position:absolute;bottom:2px;right:2px;width:12px;height:12px;
+    background:#22c55e;border:2px solid white;border-radius:50%;
+}
+.sidebar-username{
+    font-size:13px;font-weight:600;opacity:.9;margin-top:4px;text-align:center;
+}
+
+.student-card.admin-card{
+    width:100%;max-width:1100px;margin:0 auto;background:#ffffff;
+    border-radius:18px;padding:28px;border:1px solid #eef2f7;
+    box-shadow:0 14px 35px rgba(0,0,0,.08),0 6px 14px rgba(0,0,0,.04);
+}
+
+.modern-search{ margin-bottom:22px; }
+.modern-search input{
+    width:320px;max-width:100%;padding:12px 14px;border-radius:12px;
+    border:1px solid #d1d5db;background:#f8fafc;font-size:14px;
+}
+
+.table-wrapper{ overflow-x:auto; }
+.modern-table{ width:100%; border-collapse:collapse; font-size:14px; background:white; }
+.modern-table thead{ background:#f1f5f9; }
+.modern-table th{ padding:14px 12px; text-align:left; font-weight:600; }
+.modern-table td{ padding:13px 12px; border-bottom:1px solid #eef2f7; }
+
+.teacher-row{ transition:all .2s ease; }
+.teacher-row:hover{ background:#f8fafc; transform:scale(1.003); }
+
+.badge{ padding:5px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+.badge.success{ background:#dcfce7; color:#166534; }
+.badge.danger{ background:#fee2e2; color:#991b1b; }
+
+.action-cell{ display:flex; gap:8px; }
+
+.btn-edit{
+    padding:6px 12px;border-radius:8px;font-size:12px;text-decoration:none;
+    font-weight:600;background:#dbeafe;color:#1d4ed8;transition:.2s ease;
+}
+.btn-edit:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 18px rgba(29,78,216,.25);
+}
+
+.btn-delete{
+    padding:6px 12px;border-radius:8px;font-size:12px;text-decoration:none;
+    font-weight:600;background:#fee2e2;color:#b91c1c;transition:.2s ease;
+}
+.btn-delete:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 18px rgba(185,28,28,.25);
+}
+
+.empty-msg{
+    color:#64748b;font-size:14px;padding:18px 0;text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+<div class="sidebar-top">
+
+{% set photo = session.get('user_picture') %}
+{% set username = session.get('user_name') %}
+{% set initial = (username[0] if username else 'G') %}
+
+<div class="avatar-wrapper">
+{% if photo %}
+<img src="{{ photo }}" class="sidebar-avatar">
+{% else %}
+<div class="avatar-fallback">{{ initial|upper }}</div>
+{% endif %}
+<span class="avatar-status"></span>
+</div>
+
+<h2>Admin Panel</h2>
+<div class="sidebar-username">{{ username if username else 'Guest' }}</div>
+
+</div>
+
+<ul class="sidebar-menu">
+<li><a href="{{ url_for('pages.main') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+<li><a href="{{ url_for('enroll.enrollform') }}"><i data-lucide="graduation-cap"></i> Student Enrollment</a></li>
+<li><a href="{{ url_for('teacher.teacher_registration') }}"><i data-lucide="user-cog"></i> Teacher Registration</a></li>
+<li><a href="{{ url_for('student.stslist') }}"><i data-lucide="clipboard-list"></i> Students List</a></li>
+<li><a href="{{ url_for('teacher.teacher_list') }}" class="active"><i data-lucide="book-user"></i> Teachers List</a></li>
+<li><a href="{{ url_for('pages.about') }}"><i data-lucide="info"></i> About</a></li>
+<li><a href="{{ url_for('pages.help') }}"><i data-lucide="help-circle"></i> Help</a></li>
+<li><a href="{{ url_for('auth.logout') }}"><i data-lucide="log-out"></i> Logout</a></li>
+</ul>
+</aside>
+
+<main class="main-content">
+
+<div class="topbar">
+<h1>Teachers List</h1>
+<p class="breadcrumb">Dashboard / Teachers List</p>
+</div>
+
+<div class="student-card admin-card">
+
+<div class="search-box modern-search">
+<input type="text" id="searchInput"
+       placeholder="Search Teacher ID..."
+       onkeyup="searchTeacher()">
+</div>
+
+<div class="table-wrapper">
+<table class="student-table modern-table">
+<thead>
+<tr>
+<th>Teacher ID</th>
+<th>Full Name</th>
+<th>Email</th>
+<th>Subject</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="teacherTableBody">
+{% for t in teachers %}
+<tr class="teacher-row">
+<td class="teacher-id">{{ t.teacher_id }}</td>
+<td>{{ t.full_name }}</td>
+<td>{{ t.email }}</td>
+<td>{{ t.subject }}</td>
+
+<td>
+{% if t.status and t.status|lower == 'active' %}
+<span class="badge success">Active</span>
+{% else %}
+<span class="badge danger">Inactive</span>
+{% endif %}
+</td>
+
+<td class="action-cell">
+<a href="{{ url_for('teacher.edit_teacher', teacher_id=t.teacher_id) }}" class="btn-edit">Edit</a>
+<a href="{{ url_for('teacher.delete_teacher', teacher_id=t.teacher_id) }}"
+   class="btn-delete"
+   onclick="return confirm('Delete this teacher?')">Delete</a>
+</td>
+</tr>
+{% else %}
+<tr>
+<td colspan="6" class="empty-msg">No teachers found.</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+</div>
+</main>
+</div>
+
+<footer class="footer">
+© 2026 PHINMA University of Iloilo. Developed for academic purposes.
+</footer>
+
+<script>
+lucide.createIcons();
+
+/* 🔥 SEARCH FUNCTION */
+function searchTeacher(){
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#teacherTableBody .teacher-row");
+
+    rows.forEach(row=>{
+        const idCell = row.querySelector(".teacher-id");
+        if(!idCell) return;
+
+        const text = idCell.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
+    });
+}
+</script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+</body>
+</html>

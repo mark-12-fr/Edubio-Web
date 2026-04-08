@@ -1,2 +1,2 @@
 # Edubio-Web
-The admin panel website can enroll new students and register new teachers.
+The admin panel website enables the administrator to enroll new students using a fingerprint recognition system and register new teachers by inputting their personal and academic information. The fingerprint-based enrollment ensures secure, accurate, and unique identification of each student, minimizing duplication and enhancing system reliability. Additionally, the platform provides an organized interface for managing user data and maintaining an updated database.
